@@ -1,6 +1,8 @@
 import pygame
 import os
 
+wait = False
+
 # A list of things that mean yes
 yes_synonyms = ["y", "yes", "sure", "okay", "fine", "affirmative", "all right", "very well", "of course", "by all means", "certainly", "absolutely", "indeed", "right", "agreed", "roger", "ok", "yeah", "yep", "yup", "okey-dokey", "yea", "aye"]
 
@@ -71,7 +73,7 @@ def draw(board):
         pygame.draw.rect(screen, green, [tile[0]*tile_size,tile[1]*tile_size,tile_size,tile_size])
     pygame.display.update()
 
-# Import a maze from an .rle file
+# Import a maze from an .txt file
 def import_maze():
     global maze
 
@@ -79,10 +81,10 @@ def import_maze():
     maze = []
     
     # Ask filename
-    file_name = input("What is the name of the file? (.rle files only, don't include the extension) ")
+    file_name = input("What is the name of the file? (.txt files only, don't include the extension) ")
 
     # Include path and extension in file name
-    file_name = os.path.join(path, "mazes", file_name + ".rle")
+    file_name = os.path.join(path, "mazes", file_name + ".txt")
 
     # Open the file
     file = open(file_name, "r")
@@ -137,8 +139,9 @@ def find_end_path(end_x, end_y):
         y = lower[1]
         solution.append([x,y])
         event_handler(pygame.event.get())
-        draw(maze)
-        pygame.time.wait(wait_time)
+        if wait:
+            draw(maze)
+            pygame.time.wait(wait_time)
 
 # Mark the distance values of the neighboring cells
 def mark_neighbors(start_distance, x, y):

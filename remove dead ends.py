@@ -1,6 +1,8 @@
 import pygame
 import os
 
+wait = False
+
 # Things that mean yes
 yes_synonyms = ["y", "yes", "sure", "okay", "fine", "affirmative", "all right", "very well", "of course", "by all means", "certainly", "absolutely", "indeed", "right", "agreed", "roger", "ok", "yeah", "yep", "yup", "okey-dokey", "yea", "aye"]
 
@@ -36,7 +38,7 @@ if not os.path.exists(os.path.join(path, "mazes")):
 # Is it solving?
 solving = True
 
-# Import a maze from an .rle file
+# Import a maze from an .txt file
 def import_maze():
     global maze
 
@@ -44,10 +46,10 @@ def import_maze():
     maze = []
     
     # Ask filename
-    file_name = input("What is the name of the file? (.rle files only, don't include the extension) ")
+    file_name = input("What is the name of the file? (.txt files only, don't include the extension) ")
 
     # Include path and extension in file name
-    file_name = os.path.join(path, "mazes", file_name + ".rle")
+    file_name = os.path.join(path, "mazes", file_name + ".txt")
 
     # Open the file
     file = open(file_name, "r")
@@ -137,7 +139,8 @@ def fill_dead_end(start_x, start_y):
             y = checker[1]
         else:
             filling = False
-        draw(maze)
+        if wait:
+            draw(maze)
         event_handler(pygame.event.get())
     return True
 
@@ -168,12 +171,14 @@ pygame.display.set_caption("Maze Solver!")
 while solving:
     event_handler(pygame.event.get())
 
+    draw(maze)
+
     #Go through board and fill all dead ends
     for y in range(len(maze)):
         for x in range(len(maze[y])):
             fill_dead_end(x, y)
-            pygame.time.wait(1)
+            if wait:
+                pygame.time.wait(1)
 
-    draw(maze)
 
     pygame.time.wait(10)

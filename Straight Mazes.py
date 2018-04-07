@@ -3,10 +3,22 @@ from random import randint, choice
 import os
 from math import sqrt
 
+wait = False
+
 # . is walls, # is nothing, @ is finish, & is start
 maze = []
 
-maze_size = 50
+maze_size = 0
+while not (maze_size >= 5):
+    maze_size = input("How big do you want it to be? ")
+    try:
+        maze_size = int(maze_size)
+        if not maze_size >= 5:
+            print("Please make it at least 5!")
+            pass
+    except ValueError:
+        print("Please make it an integer.")
+        maze_size = 0
 
 for y in range(maze_size):
     row = []
@@ -26,7 +38,7 @@ players = []
 creating = True
 events = []
 
-wait_time = 10
+wait_time = 0
 
 path = os.path.dirname(__file__)
 
@@ -39,7 +51,7 @@ def save_maze(board):
     while len(save_name) == 0:
         save_name = input("What do you want to save it as? (Don't include the extension) ")
 
-    save_name = os.path.join(path, "mazes", save_name + ".rle")
+    save_name = os.path.join(path, "mazes", save_name + ".txt")
 
     file = open(save_name, "w+")
 
@@ -108,7 +120,7 @@ def create():
     maze[cells_list[0][1]][cells_list[0][0]] = "#"
 
     while len(cells_list) > 0:
-        current_cell = choice(cells_list)
+        current_cell = cells_list[0]
 
         if len(neighbors(current_cell)) > 0:
             random_neighbor = choice(neighbors(current_cell))
@@ -123,8 +135,9 @@ def create():
         
         get_events()
         handle_events(events)
-        draw(maze)
-        pygame.time.wait(wait_time)
+        if wait:
+            draw(maze)
+            pygame.time.wait(wait_time)
     set_start_and_end()
 
 def get_events():
