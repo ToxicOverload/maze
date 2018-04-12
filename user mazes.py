@@ -67,7 +67,7 @@ def save_maze():
     draw(maze)
     save_name = ""
 
-    if not input("Are you sure it's ready?") in yes_synonyms:
+    if not input("Are you sure it's ready? ") in yes_synonyms:
         return False
 
     while len(save_name) == 0:
@@ -139,7 +139,7 @@ def click_handler():
         if clicking_wall:
             maze[clicked_coords[1]][clicked_coords[0]] = "#"
         else:
-            maze[clicked_coords[1]][clicked_coords[0]] = ".20"
+            maze[clicked_coords[1]][clicked_coords[0]] = "."
 
 # Simple event handler, test for quitting and saving
 def event_handler(events):

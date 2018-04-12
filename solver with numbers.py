@@ -39,7 +39,7 @@ gray = (100,100,100)
 purple = (255,0,255)
 
 # The time to wait between frames
-wait_time = 500
+wait_time = 50
 
 # Set the current directory
 path = os.path.dirname(__file__)
@@ -60,15 +60,15 @@ def draw(board):
                 pygame.draw.rect(screen, blue, [x*tile_size,y*tile_size,tile_size,tile_size])
             elif board[y][x] == "&":
                 pygame.draw.rect(screen, purple, [x*tile_size,y*tile_size,tile_size,tile_size])
-
-            distance_text = font.render(str(distances[y][x]), False, gray)
-            text_size = distance_text.get_size()
-            screen.blit(distance_text, [x*tile_size + (tile_size/2) - text_size[0]/2, y*tile_size + (tile_size/2) - text_size[1]/2])
+            if distances[y][x] > 0:
+                distance_text = font.render(str(distances[y][x]), False, gray)
+                text_size = distance_text.get_size()
+                screen.blit(distance_text, [x*tile_size + (tile_size/2) - text_size[0]/2, y*tile_size + (tile_size/2) - text_size[1]/2])
     for tile in solution:
         pygame.draw.rect(screen, green, [tile[0]*tile_size,tile[1]*tile_size,tile_size,tile_size])
     pygame.display.update()
 
-# Import a maze from an .rle file
+# Import a maze from an .txt file
 def import_maze():
     global maze
 
@@ -76,10 +76,10 @@ def import_maze():
     maze = []
     
     # Ask filename
-    file_name = input("What is the name of the file? (.rle files only, don't include the extension) ")
+    file_name = input("What is the name of the file? (.txt files only, don't include the extension) ")
 
     # Include path and extension in file name
-    file_name = os.path.join(path, "mazes", file_name + ".rle")
+    file_name = os.path.join(path, "mazes", file_name + ".txt")
 
     # Open the file
     file = open(file_name, "r")
