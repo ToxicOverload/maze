@@ -64,7 +64,7 @@ def click_board():
         elif click_phase == 2:
             maze[clicked_coords[1]][clicked_coords[0]] = "@"
             click_phase = 3
-            save_maze()
+            save_maze(maze)
     elif maze[clicked_coords[1]][clicked_coords[0]] == ".":
         clicking_wall = True
         #maze[clicked_coords[1]][clicked_coords[0]] = "#"
