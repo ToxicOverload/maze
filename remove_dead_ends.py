@@ -1,10 +1,8 @@
 import pygame
 import os
+from Maze import *
 
 wait = False
-
-# Things that mean yes
-yes_synonyms = ["y", "yes", "sure", "okay", "fine", "affirmative", "all right", "very well", "of course", "by all means", "certainly", "absolutely", "indeed", "right", "agreed", "roger", "ok", "yeah", "yep", "yup", "okey-dokey", "yea", "aye"]
 
 # Uses the storage method using a 2-dimensional array where:
 # . is a wall, # is nothing, @ is finish, and & is start
@@ -20,53 +18,8 @@ maze = [["&",".",".",".",".",".","#","#","#","#"],
         [".",".","#","#","#",".","#","#","#","#"],
         ["#","#","#",".",".",".",".",".",".","@"]]
 
-# Some basic colors
-white = (255,255,255)
-black = (0,0,0)
-blue = (0,0,255)
-green = (0,255,0)
-gray = (100,100,100)
-purple = (255,0,255)
-
-# Set the current directory
-path = os.path.dirname(__file__)
-
-# If the mazes file doesn't exist, create it
-if not os.path.exists(os.path.join(path, "mazes")):
-    os.makedirs(os.path.join(path, "mazes"))
-
 # Is it solving?
 solving = True
-
-# Import a maze from an .txt file
-def import_maze():
-    global maze
-
-    # Reset maze
-    maze = []
-    
-    # Ask filename
-    file_name = input("What is the name of the file? (.txt files only, don't include the extension) ")
-
-    # Include path and extension in file name
-    file_name = os.path.join(path, "mazes", file_name + ".txt")
-
-    # Open the file
-    file = open(file_name, "r")
-
-    # Read the file as lines
-    lines = file.readlines()
-
-    # Remove header line
-    lines.pop(0)
-
-    # Set maze to the body lines and remove the \n at the end of each line
-    for line in lines:
-        line = line.replace("\n","")
-        row = line.split(",")
-        maze.append(row)
-
-    file.close()
 
 # Draw the inputted board. Black is a wall, white is open, blue is start,
 # gray is filled dead end, and purple is the end
@@ -141,7 +94,7 @@ def fill_dead_end(start_x, start_y):
             filling = False
         if wait:
             draw(maze)
-        event_handler(pygame.event.get())
+            event_handler(pygame.event.get())
     return True
 
 # Simple event handler, test for quitting
@@ -155,30 +108,28 @@ def event_handler(events):
                 pygame.quit()
                 quit()
 
-# If the user wants it, import a maze
-if input("Do you want to load a file? ") in yes_synonyms:
-    import_maze()
+if __name__ == "__main__":
+    # If the user wants it, import a maze
+    if input("Do you want to load a file? ") in yes_synonyms:
+        maze = import_maze()
 
-# Set the size of the tiles
-tile_size = int(600/len(maze))
+    # Set the size of the tiles
+    tile_size = int(600/len(maze))
 
-# Initiate pygame and board
-pygame.init()
-size = [len(maze)*tile_size,len(maze[0])*tile_size]
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Maze Solver!")
+    # Initiate pygame and board
+    pygame.init()
+    size = [len(maze)*tile_size,len(maze[0])*tile_size]
+    screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("Maze Solver!")
 
-while solving:
-    event_handler(pygame.event.get())
+    while solving:
+        event_handler(pygame.event.get())
+        draw(maze)
 
-    draw(maze)
-
-    #Go through board and fill all dead ends
-    for y in range(len(maze)):
-        for x in range(len(maze[y])):
-            fill_dead_end(x, y)
-            if wait:
-                pygame.time.wait(1)
-
-
+        # Go through board and fill all dead ends
+        for y in range(len(maze)):
+            for x in range(len(maze[y])):
+                fill_dead_end(x, y)
+                if wait:
+                    pygame.time.wait(1)
     pygame.time.wait(10)

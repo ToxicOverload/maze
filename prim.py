@@ -2,6 +2,7 @@ import pygame
 from random import randint, choice
 import os
 from math import sqrt
+from Maze import *
 
 wait = False
 
@@ -28,43 +29,11 @@ for y in range(maze_size):
 
 cells_list = []
 
-white = (255,255,255)
-black = (0,0,0)
-blue = (0,0,255)
-green = (0,255,0)
-purple = (255,0,255)
-
 players = []
 creating = True
 events = []
 
 wait_time = 0
-
-path = os.path.dirname(__file__)
-
-if not os.path.exists(os.path.join(path, "mazes")):
-    os.makedirs(os.path.join(path, "mazes"))
-
-def save_maze(board):
-    save_name = ""
-
-    while len(save_name) == 0:
-        save_name = input("What do you want to save it as? (Don't include the extension) ")
-
-    save_name = os.path.join(path, "mazes", save_name + ".txt")
-
-    file = open(save_name, "w+")
-
-    file.write("width: " + str(maze_size) + "\n")
-
-    temp_board = board
-    for row in temp_board:
-        row = str(row)
-        row = row.replace("[","")
-        row = row.replace("]","")
-        row = row.replace("'","")
-        row = row.replace(" ","")
-        file.write(row + "\n")
 
 def neighbors(cell):
     neighbors = []
@@ -181,10 +150,10 @@ pygame.display.set_caption("Maze Fun!")
 
 create()
 
+draw(maze)
 while True:
     get_events()
     handle_events(events)
-    draw(maze)
     pygame.time.wait(wait_time)
 
 pygame.quit()

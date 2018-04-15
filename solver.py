@@ -1,10 +1,8 @@
 import pygame
 import os
+from Maze import *
 
 wait = False
-
-# A list of things that mean yes
-yes_synonyms = ["y", "yes", "sure", "okay", "fine", "affirmative", "all right", "very well", "of course", "by all means", "certainly", "absolutely", "indeed", "right", "agreed", "roger", "ok", "yeah", "yep", "yup", "okey-dokey", "yea", "aye"]
 
 # Uses the storage method using a 2-dimensional array where:
 # . is a wall, # is nothing, @ is finish, and & is start
@@ -32,23 +30,8 @@ distances = []
 # A stack of tiles to be marked with their distance
 marking_stack = []
 
-# Some basic colors I use
-white = (255,255,255)
-black = (0,0,0)
-blue = (0,0,255)
-green = (0,255,0)
-gray = (100,100,100)
-purple = (255,0,255)
-
 # The time to wait between frames
 wait_time = 0
-
-# Set the current directory
-path = os.path.dirname(__file__)
-
-# If the mazes file doesn't exist, create it
-if not os.path.exists(os.path.join(path, "mazes")):
-    os.makedirs(os.path.join(path, "mazes"))
 
 # Set the font to be arial with a size of 25
 #font = pygame.font.SysFont("arial", 25)
@@ -72,36 +55,6 @@ def draw(board):
     for tile in solution:
         pygame.draw.rect(screen, green, [tile[0]*tile_size,tile[1]*tile_size,tile_size,tile_size])
     pygame.display.update()
-
-# Import a maze from an .txt file
-def import_maze():
-    global maze
-
-    # Reset maze
-    maze = []
-    
-    # Ask filename
-    file_name = input("What is the name of the file? (.txt files only, don't include the extension) ")
-
-    # Include path and extension in file name
-    file_name = os.path.join(path, "mazes", file_name + ".txt")
-
-    # Open the file
-    file = open(file_name, "r")
-
-    # Read the file as lines
-    lines = file.readlines()
-
-    # Remove header line
-    lines.pop(0)
-
-    # Set maze to the body lines and remove the \n at the end of each line
-    for line in lines:
-        line = line.replace("\n","")
-        row = line.split(",")
-        maze.append(row)
-
-    file.close()
 
 # Returns the tile adjacent to the inputed one with a lower distance value
 def return_lower(x, y):
@@ -227,41 +180,43 @@ def event_handler(events):
                 pygame.quit()
                 quit()
 
-# If the user wants it, import a maze
-if input("Do you want to load a file? ") in yes_synonyms:
-    import_maze()
+if __name__ == "__main__":
+    # If the user wants it, import a maze
+    if input("Do you want to load a file? ") in yes_synonyms:
+        maze = import_maze()
 
-# Set values for start and end coords and distances
-for y in range(len(maze)):
-    row = []
-    for x in range(len(maze[y])):
-        if maze[y][x] == "&":
-            row.append(0)
-            start_coords.append(x)
-            start_coords.append(y)
-        elif maze[y][x] == "@":
-            row.append(-1)
-            end_coords.append(x)
-            end_coords.append(y)
-        else:
-            row.append(-1)
-    distances.append(row)
+    # Set values for start and end coords and distances
+    for y in range(len(maze)):
+        row = []
+        for x in range(len(maze[y])):
+            if maze[y][x] == "&":
+                row.append(0)
+                start_coords.append(x)
+                start_coords.append(y)
+            elif maze[y][x] == "@":
+                row.append(-1)
+                end_coords.append(x)
+                end_coords.append(y)
+            else:
+                row.append(-1)
+        distances.append(row)
 
-# Set the size of the tiles
-tile_size = int(600/len(maze))
+    # Set the size of the tiles
+    tile_size = int(600/len(maze))
 
-# Startup pygame and the display
-pygame.init()
-size = [len(maze)*tile_size,len(maze[0])*tile_size]
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption("Maze Solver!")
+    # Startup pygame and the display
+    pygame.init()
+    size = [len(maze)*tile_size,len(maze[0])*tile_size]
+    screen = pygame.display.set_mode(size)
+    pygame.display.set_caption("Maze Solver!")
 
-draw(maze)
-
-# Mark all tiles' distances
-mark_all(start_coords[0],start_coords[1])
-
-# Just keep running after it's all solved
-while True:
-    event_handler(pygame.event.get())
     draw(maze)
+
+    # Mark all tiles' distances
+    mark_all(start_coords[0],start_coords[1])
+
+    draw(maze)
+
+    # Just keep running after it's all solved
+    while True:
+        event_handler(pygame.event.get())
