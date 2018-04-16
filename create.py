@@ -1,12 +1,7 @@
 import pygame
 import os
+from Maze import *
 
-yes_synonyms = ["y", "yes", "sure", "okay", "fine", "affirmative", "all right", "very well", "of course", "by all means", "certainly", "absolutely", "indeed", "right", "agreed", "roger", "ok", "yeah", "yep", "yup", "okey-dokey", "yea", "aye"]
-
-white = (255,255,255)
-black = (0,0,0)
-purple = (255,0,255)
-blue = (0,0,255)
 
 maze_size = 0
 while not (maze_size >= 5):
@@ -30,15 +25,10 @@ for y in range(maze_size):
         row.append("#")
     maze.append(row)
 
-path = os.path.dirname(__file__)
-
-if not os.path.exists(os.path.join(path, "mazes")):
-    os.makedirs(os.path.join(path, "mazes"))
-
 tile_size = int(600/maze_size)
 
 pygame.init()
-size = [maze_size*tile_size,maze_size*tile_size]
+size = (maze_size*tile_size,maze_size*tile_size)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Maze Fun!")
 
@@ -55,39 +45,6 @@ def draw(board):
             elif board[y][x] == "&":
                 pygame.draw.rect(screen, purple, [x*tile_size,y*tile_size,tile_size,tile_size])
     pygame.display.update()
-
-def save_maze():
-    global click_phase
-    if click_phase == 0:
-        click_phase = 1
-        print("Select the start position.")
-        return False
-    if click_phase != 3:
-        return False
-    draw(maze)
-    save_name = ""
-
-    if not input("Are you sure it's ready? ") in yes_synonyms:
-        return False
-
-    while len(save_name) == 0:
-        save_name = input("What do you want to save it as? (Don't include the extension) ")
-
-    save_name = os.path.join(path, "mazes", save_name + ".txt")
-
-    file = open(save_name, "w+")
-
-    file.write("width: " + str(maze_size) + "\n")
-
-    temp_board = maze
-    for row in temp_board:
-        row = str(row)
-        row = row.replace("[","")
-        row = row.replace("]","")
-        row = row.replace("'","")
-        row = row.replace(" ","")
-        file.write(row + "\n")
-    return True
 
 def click_board():
     global maze
@@ -107,7 +64,7 @@ def click_board():
         elif click_phase == 2:
             maze[clicked_coords[1]][clicked_coords[0]] = "@"
             click_phase = 3
-            save_maze()
+            save_maze(maze)
     elif maze[clicked_coords[1]][clicked_coords[0]] == ".":
         clicking_wall = True
         #maze[clicked_coords[1]][clicked_coords[0]] = "#"
@@ -143,6 +100,7 @@ def click_handler():
 
 # Simple event handler, test for quitting and saving
 def event_handler(events):
+    global click_phase
     for event in events:
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -152,7 +110,15 @@ def event_handler(events):
                 pygame.quit()
                 quit()
             elif event.key == pygame.K_s and click_phase == 0:
-                save_maze()
+                draw(maze)
+                if click_phase == 0:
+                    click_phase = 1
+                    print("Select the start position.")
+                elif click_phase != 3:
+                    pass
+                else:
+                    if input("Are you sure it's ready? ") in yes_synonyms:
+                        save_maze(maze)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             click_board()
 
